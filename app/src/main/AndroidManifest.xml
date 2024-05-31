@@ -12,16 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KOT104_AssignmentFinal"
         tools:targetApi="31">
+
         <activity
-            android:name=".constant.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false"
-            android:label="@string/title_activity_register"
-            android:theme="@style/Theme.KOT104_AssignmentFinal" />
-        <activity
-            android:name=".SlashActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.KOT104_AssignmentFinal">
@@ -31,16 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.KOT104_AssignmentFinal" />
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.KOT104_AssignmentFinal" />
+
     </application>
 
 </manifest>

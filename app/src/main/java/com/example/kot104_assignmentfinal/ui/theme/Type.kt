@@ -8,12 +8,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.kot104_assignmentfinal.R
 import com.example.kot104_assignmentfinal.constant.AppConstant
 
 val Typography = Typography(
     titleLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.merriweather_bold)),
+        fontFamily = FontFamily(Font(AppConstant.FONT_GELASIO_BOLD)),
         fontWeight = FontWeight.Normal,
         fontSize = 30.sp,
         lineHeight = 45.sp,
@@ -21,7 +20,7 @@ val Typography = Typography(
         color = HomeBeautiColor
     ),
     titleMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.merriweather_regular)),
+        fontFamily = FontFamily(Font(AppConstant.FONT_GELASIO_SEMI_BOLD)),
         fontWeight = FontWeight(400),
         fontSize = 30.sp,
         lineHeight = 45.sp,
@@ -35,6 +34,27 @@ val Typography = Typography(
         fontStyle = FontStyle.Normal,
         color = HomeBeautiColor,
         textAlign = TextAlign.Center
+    ),
+    bodySmall = TextStyle(
+        fontFamily = FontFamily(Font(AppConstant.FONT_NUNITO_SANS_REGULAR)),
+        fontWeight = FontWeight(400),
+        fontSize = 14.sp,
+        fontStyle = FontStyle.Normal,
+        color = MakeYourColor,
+    ),
+    displaySmall = TextStyle(
+        fontFamily = FontFamily(Font(AppConstant.FONT_NUNITO_SANS_BOLD)),
+        fontWeight = FontWeight(400),
+        fontSize = 14.sp,
+        fontStyle = FontStyle.Normal,
+        color = disableTextColor,
+    ),
+    displayLarge = TextStyle(
+        fontFamily = FontFamily(Font(AppConstant.FONT_MERRIWEATHER_BOLD)),
+        fontWeight = FontWeight(700),
+        fontSize = 16.sp,
+        fontStyle = FontStyle.Normal,
+        color = HomeBeautiColor,
     ),
 
     /* Other default text styles to override

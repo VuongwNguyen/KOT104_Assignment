@@ -1,10 +1,5 @@
-package com.example.kot104_assignmentfinal
+package com.example.kot104_assignmentfinal.screen
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -41,105 +35,89 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.kot104_assignmentfinal.R
 import com.example.kot104_assignmentfinal.ui.theme.BlackColor
 import com.example.kot104_assignmentfinal.ui.theme.GreyColor
-import com.example.kot104_assignmentfinal.ui.theme.KOT104_AssignmentFinalTheme
 import com.example.kot104_assignmentfinal.ui.theme.PrimaryColor
 import com.example.kot104_assignmentfinal.ui.theme.WhiteColor
 
-class LoginActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            KOT104_AssignmentFinalTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
-
-    val ctxt = LocalContext.current
-    var emailTF by rememberSaveable { mutableStateOf("") }
-    var passwordTF by rememberSaveable { mutableStateOf("") }
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(WhiteColor),
-
-    ) {
-        HeadersLogin()
-        Text(
-            text = "Hello!",
-            modifier = Modifier.padding(horizontal = 30.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
-        Text(
-            text = "Welcome back".uppercase(),
-            modifier = Modifier.padding(horizontal = 30.dp),
-            style = MaterialTheme.typography.titleLarge
-        )
-        Spacer(modifier = Modifier.size(60.dp))
-        Box(
-            modifier = Modifier
-                .padding(end = 30.dp)
-                .shadow(elevation = 30.dp)
+class LoginScreen {
+    @Composable
+    fun Container(modifier: Modifier = Modifier) {
+        val ctxt = LocalContext.current
+        var emailTF by rememberSaveable { mutableStateOf("") }
+        var passwordTF by rememberSaveable { mutableStateOf("") }
+        Column(
+            modifier = Modifier.fillMaxSize()
                 .background(WhiteColor),
 
             ) {
-            Column {
-                TextFieldCP(
-                    holder = "Email",
-                    value = emailTF,
-                    onValueChange = { emailTF = it },
-                )
-                Spacer(modifier = Modifier.size(20.dp))
-                TextFieldCP(
-                    holder = "Password",
-                    value = passwordTF,
-                    onValueChange = { passwordTF = it },
-                    isPassword = true
-                )
-                Spacer(modifier = Modifier.size(20.dp))
-                Text(
-                    text = "Forgot Password?",
-                    modifier = Modifier
-                        .padding(end = 20.dp)
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.labelSmall,
-                )
-                Spacer(modifier = Modifier.size(20.dp))
-                ButtonCP(title = "Log in") {
-                    ctxt.startActivity(Intent(ctxt, RegisterActivity::class.java))
+            HeadersLogin()
+            Text(
+                text = "Hello!",
+                modifier = Modifier.padding(horizontal = 30.dp),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Welcome back".uppercase(),
+                modifier = Modifier.padding(horizontal = 30.dp),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.size(60.dp))
+            Box(
+                modifier = Modifier
+                    .padding(end = 30.dp)
+                    .shadow(elevation = 30.dp)
+                    .background(WhiteColor),
+
+                ) {
+                Column {
+                    TextFieldCP(
+                        holder = "Email",
+                        value = emailTF,
+                        onValueChange = { emailTF = it },
+                    )
+                    Spacer(modifier = Modifier.size(20.dp))
+                    TextFieldCP(
+                        holder = "Password",
+                        value = passwordTF,
+                        onValueChange = { passwordTF = it },
+                        isPassword = true
+                    )
+                    Spacer(modifier = Modifier.size(20.dp))
+                    Text(
+                        text = "Forgot Password?",
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                    Spacer(modifier = Modifier.size(20.dp))
+                    ButtonCP(title = "Log in") {
+
+                    }
+
+
+
+                    Spacer(modifier = Modifier.size(20.dp))
+                    Text(
+                        text = "Sign up",
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                    Spacer(modifier = Modifier.size(20.dp))
                 }
 
 
-
-                Spacer(modifier = Modifier.size(20.dp))
-                Text(
-                    text = "Sign up",
-                    modifier = Modifier
-                        .padding(end = 20.dp)
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.labelSmall,
-                )
-                Spacer(modifier = Modifier.size(20.dp))
             }
-
-
         }
     }
-}
 
+
+}
 
 @Composable
 fun ButtonCP(title: String, onClick: () -> Unit) {
@@ -242,18 +220,3 @@ fun HeadersLogin() {
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
