@@ -1,5 +1,6 @@
 package com.example.kot104_assignmentfinal.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +38,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.kot104_assignmentfinal.R
+import com.example.kot104_assignmentfinal.helper.IRetrofit
+import com.example.kot104_assignmentfinal.helper.RetrofitAPI
+import com.example.kot104_assignmentfinal.httpModel.LoginRequestModel
+import com.example.kot104_assignmentfinal.httpModel.LoginResponseModel
 import com.example.kot104_assignmentfinal.ui.theme.BlackColor
 import com.example.kot104_assignmentfinal.ui.theme.GreyColor
 import com.example.kot104_assignmentfinal.ui.theme.PrimaryColor
@@ -44,15 +49,52 @@ import com.example.kot104_assignmentfinal.ui.theme.WhiteColor
 
 class LoginScreen {
     @Composable
-    fun Container(modifier: Modifier = Modifier) {
+    fun Container(goTo: (String) -> Unit) {
         val ctxt = LocalContext.current
-        var emailTF by rememberSaveable { mutableStateOf("") }
-        var passwordTF by rememberSaveable { mutableStateOf("") }
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .background(WhiteColor),
+        var emailTF by rememberSaveable { mutableStateOf("nguyenvuong134k5@gmail.com") }
+        var passwordTF by rememberSaveable { mutableStateOf("123456789") }
 
+        fun callbackLogin(responseModel: LoginResponseModel) {
+            if (responseModel.status) {
+                Toast.makeText(ctxt, "Welcome ${responseModel.user?.username}", Toast.LENGTH_SHORT)
+                    .show()
+                println(responseModel.user)
+                goTo("TabView")
+            } else {
+                Toast.makeText(ctxt, "Login failed", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        fun onClickLogin() {
+            if (emailTF.isNotEmpty() && passwordTF.isNotEmpty()) {
+                try {
+                    val api = RetrofitAPI()
+                    val loginRequestModel = LoginRequestModel(
+                        username = emailTF,
+                        password = passwordTF
+                    )
+                    api.loginUser(loginRequestModel) {
+                        if (it != null) {
+                            callbackLogin(it)
+                        } else {
+                            Toast.makeText(ctxt, "Login failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            } else {
+                Toast.makeText(ctxt, "Please fill all fields", Toast.LENGTH_SHORT).show()
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(WhiteColor),
             ) {
+
             HeadersLogin()
             Text(
                 text = "Hello!",
@@ -70,9 +112,9 @@ class LoginScreen {
                     .padding(end = 30.dp)
                     .shadow(elevation = 30.dp)
                     .background(WhiteColor),
-
                 ) {
                 Column {
+                    Spacer(modifier = Modifier.size(30.dp))
                     TextFieldCP(
                         holder = "Email",
                         value = emailTF,
@@ -95,11 +137,8 @@ class LoginScreen {
                     )
                     Spacer(modifier = Modifier.size(20.dp))
                     ButtonCP(title = "Log in") {
-
+                        onClickLogin()
                     }
-
-
-
                     Spacer(modifier = Modifier.size(20.dp))
                     Text(
                         text = "Sign up",
@@ -108,15 +147,12 @@ class LoginScreen {
                             .fillMaxWidth(),
                         style = MaterialTheme.typography.labelSmall,
                     )
-                    Spacer(modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.size(30.dp))
                 }
-
-
             }
+
         }
     }
-
-
 }
 
 @Composable

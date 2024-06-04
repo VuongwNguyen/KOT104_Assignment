@@ -50,6 +50,13 @@ android {
 }
 
 dependencies {
+
+    val retrofit_version = "2.9.0"
+    // retrofit
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-jackson:$retrofit_version")
+
+
     val nav_version = "2.7.7"
 
     // Java language implementation

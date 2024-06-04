@@ -22,6 +22,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kot104_assignmentfinal.R
 import com.example.kot104_assignmentfinal.constant.AppConstant
+import com.example.kot104_assignmentfinal.helper.RetrofitAPI
+import com.example.kot104_assignmentfinal.httpModel.Category
+import com.example.kot104_assignmentfinal.httpModel.CategoryResponseModel
+import com.example.kot104_assignmentfinal.httpModel.Product
+import com.example.kot104_assignmentfinal.httpModel.ProductResponseModel
 import com.example.kot104_assignmentfinal.ui.theme.DisableColor
 import com.example.kot104_assignmentfinal.ui.theme.GreyColor
 import com.example.kot104_assignmentfinal.ui.theme.HomeBeautiColor
@@ -46,6 +55,56 @@ import com.example.kot104_assignmentfinal.ui.theme.PrimaryColor
 class HomeScreen {
     @Composable
     fun Container() {
+        var listProduct by remember { mutableStateOf(listOf<Product>()) }
+        var listCategory by remember { mutableStateOf(listOf<Category>()) }
+
+        fun productCallback(response: ProductResponseModel) {
+            println("Response: $response")
+            listProduct = if (response.products != null) {
+                (response.products ?: listOf()) as List<Product>
+            } else {
+                listOf()
+            }
+        }
+
+        fun getAllProduct() {
+            try {
+                val api = RetrofitAPI()
+                api.getAllProduct {
+                    if (it != null) {
+                        productCallback(it)
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error: $e")
+            }
+        }
+        getAllProduct()
+
+        fun categoryCallback(response: CategoryResponseModel) {
+            println("Response: $response")
+            listCategory = if (response.categories != null) {
+                (response.categories ?: listOf()) as List<Category>
+            } else {
+                listOf()
+            }
+        }
+
+        fun getAllCategory() {
+            try {
+                val api = RetrofitAPI()
+                api.getAllCategory {
+                    if (it != null) {
+                        categoryCallback(it)
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error: $e")
+            }
+        }
+        getAllCategory()
+
+
         Column(Modifier.padding(top = 30.dp)) {
             ToolBarCP(
                 leftIcon = R.drawable.ic_search,
@@ -53,7 +112,7 @@ class HomeScreen {
 //                simpleText = "My cart"
             )
             LazyRow {
-                items(getCategories()) { item ->
+                items(listCategory) { item ->
                     RenderItemCate(item)
                 }
             }
@@ -61,9 +120,11 @@ class HomeScreen {
                 columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 10.dp,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier
+                    .padding(10.dp)
+                    .weight(1f)
             ) {
-                items(getProduct()) { item ->
+                items(listProduct) { item ->
                     RenderProduct(item)
                 }
             }
@@ -79,7 +140,7 @@ class HomeScreen {
                     .clip(RoundedCornerShape(10.dp))
                     .height(200.dp)
                     .paint(
-                        painter = painterResource(id = item.image),
+                        painter = painterResource(id = R.drawable.product_image),
                         contentScale = ContentScale.FillBounds
                     )
             ) {
@@ -95,8 +156,7 @@ class HomeScreen {
                         .padding(10.dp)
                         .offset(x = (-7).dp, y = (-7).dp)
                         .background(
-                            color = MakeYourColor40,
-                            shape = RoundedCornerShape(5.dp)
+                            color = MakeYourColor40, shape = RoundedCornerShape(5.dp)
                         )
                 )
             }
@@ -122,7 +182,7 @@ class HomeScreen {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = item.image),
+                painter = painterResource(id = R.drawable.ic_lamp),
                 contentDescription = null,
                 modifier = Modifier
                     .size(50.dp)
@@ -130,52 +190,15 @@ class HomeScreen {
                     .padding(10.dp)
             )
             Text(
-                text = item.name,
-                style = MaterialTheme.typography.displaySmall
+                text = item.name, style = MaterialTheme.typography.displaySmall
             )
         }
     }
-
-
-    data class Category(
-        val name: String, val image: Int
-    )
-
-    fun getCategories() = listOf(
-        Category("Chair", R.drawable.ic_chair),
-        Category("Table", R.drawable.ic_table),
-        Category("Armchair", R.drawable.ic_sofa),
-        Category("Bed", R.drawable.ic_bed),
-        Category("Lamp", R.drawable.ic_lamp),
-    )
-
-    data class Product(
-        val name: String,
-        val image: Int,
-        val price: Int,
-    )
-
-    fun getProduct() = listOf(
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-        Product("Black Simple Lamp", R.drawable.product_image, 50),
-    )
 }
 
 @Composable
 fun ToolBarCP(
-    leftIcon: Int = 0,
-    rightIcon: Int = 0,
-    simpleText: String = ""
+    leftIcon: Int = 0, rightIcon: Int = 0, simpleText: String = ""
 ) {
     val lIcon = if (leftIcon == 0) 0 else leftIcon
     val rIcon = if (rightIcon == 0) 0 else rightIcon
@@ -197,8 +220,7 @@ fun ToolBarCP(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Make home",
-                    style = TextStyle(
+                    text = "Make home", style = TextStyle(
                         fontFamily = FontFamily(Font(AppConstant.FONT_GELASIO_REGULAR)),
                         fontWeight = FontWeight(400),
                         fontSize = 18.sp,
@@ -207,22 +229,22 @@ fun ToolBarCP(
                         fontStyle = FontStyle.Normal
                     )
                 )
-                Text(text = "beautiful".uppercase(),
-                    style = TextStyle(
+                Text(
+                    text = "beautiful".uppercase(), style = TextStyle(
                         fontFamily = FontFamily(Font(AppConstant.FONT_GELASIO_BOLD)),
                         fontWeight = FontWeight(700),
                         fontSize = 18.sp,
                         color = PrimaryColor,
                         lineHeight = 25.sp,
                         fontStyle = FontStyle.Normal
-                    ))
+                    )
+                )
             }
         } else if (simpleText == "null") {
             Spacer(modifier = Modifier.size(25.dp))
         } else {
             Text(
-                text = simpleText,
-                style = TextStyle(
+                text = simpleText, style = TextStyle(
                     fontFamily = FontFamily(Font(AppConstant.FONT_GELASIO_BOLD)),
                     fontWeight = FontWeight(700),
                     fontSize = 16.sp,
