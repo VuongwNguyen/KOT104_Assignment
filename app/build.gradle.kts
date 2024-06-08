@@ -56,6 +56,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
     implementation("com.squareup.retrofit2:converter-jackson:$retrofit_version")
 
+    // gson converter
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.code.gson:gson:2.8.8")
+
 
     val nav_version = "2.7.7"
 

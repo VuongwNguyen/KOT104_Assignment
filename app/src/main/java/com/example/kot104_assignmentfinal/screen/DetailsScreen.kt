@@ -37,57 +37,28 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.kot104_assignmentfinal.R
+import com.example.kot104_assignmentfinal.httpModel.Product
 
+data class AColor(
+    val id: String,
+    val color: Color
+)
 
-data class ProductDetail(
-    val id: Int,
-    val name: String,
-    val price: Int,
-    val start: Float,
-    val reviews: Int,
-    val description: String,
-    var quantity: Int,
-    val imgColors: List<imgColor>
-) {
-    data class imgColor(
-        val id_img: Int,
-        val img: Int,
-        val color_img: String
-    )
-}
 class DetailsScreen {
     @Composable
-    fun Container() {
+    fun Container(
+        product: Product,
+        goTo: (String) -> Unit,
+        addToCart : (Product) -> Unit
+    ) {
         var chooseColor = remember { mutableStateOf(0) }
-        var quantity = remember { mutableStateOf(1) }
-        val productDetail = ProductDetail(
-            1,
-            "Minimal Stand",
-            50,
-            4.5F,
-            50,
-            "Minimal Stand is made of by natural wood. The design that is very simple and minimal. This is truly one of the best furnitures in any family for now. With 3 different colors, you can easily select the best match for your home. ",
-            1,
-            imgColors = listOf(
-                ProductDetail.imgColor(
-                    1,
-                    R.drawable.minimal_stand,
-                    "FFFFFF"
-                ),
-                ProductDetail.imgColor(
-                    2,
-                    R.drawable.coffee_chair,
-                    "B4916C"
-                ),
-                ProductDetail.imgColor(
-                    3,
-                    R.drawable.black_simple_lamp,
-                    "E4CBAD"
-                ),
-            )
+        val listColor = listOf(
+            AColor("1", Color(0xFF000000)),
+            AColor("2", Color(0xFF0000FF)),
+            AColor("3", Color(0xFF00FF00)),
         )
-
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -97,8 +68,8 @@ class DetailsScreen {
                     .height(455.dp),
                 contentAlignment = Alignment.TopEnd
             ) {
-                Image(
-                    painter = painterResource(id = productDetail.imgColors[0].img),
+                AsyncImage(
+                    model = product.image[0],
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
@@ -122,7 +93,6 @@ class DetailsScreen {
                         simpleText = "null"
                     )
 
-
                     Column(
                         modifier = Modifier.shadow(
                             elevation = 10.dp,
@@ -140,8 +110,12 @@ class DetailsScreen {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            itemsIndexed(productDetail.imgColors){ index, item ->
-                                itemChooseColor(item = item, index = index, chooseColor = chooseColor)
+                            itemsIndexed(listColor) { index, item ->
+                                itemChooseColor(
+                                    item = item,
+                                    index = index,
+                                    chooseColor = chooseColor
+                                )
                             }
                         }
                     }
@@ -154,36 +128,38 @@ class DetailsScreen {
                 }
             }
 
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 25.dp)
-            ){
+            ) {
                 Text(
-                    text = "${productDetail.name}",
+//                    tách dấu cộng thành dấu cách
+
+                    text = product.name.replace("+", " "),
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.gelasio_bold)),
                     color = Color(android.graphics.Color.parseColor("#303030")),
                     modifier = Modifier.padding(top = 15.dp)
                 )
 
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     Text(
-                        text = "$ ${productDetail.price}",
+                        text = "$ ${product.price}",
                         fontSize = 30.sp,
                         fontFamily = FontFamily(Font(R.font.nunito_sans_bold)),
                         color = Color(android.graphics.Color.parseColor("#303030"))
                     )
 
-                    Row (
+                    Row(
                         verticalAlignment = Alignment.CenterVertically
-                    ){
+                    ) {
                         Image(
                             painter = painterResource(id = R.drawable.icon_plus),
                             contentDescription = null,
@@ -191,13 +167,13 @@ class DetailsScreen {
                                 .width(30.dp)
                                 .height(30.dp)
                                 .clip(RoundedCornerShape(6))
-                                .clickable { productDetail.quantity += 1 }
+//                                .clickable { productDetail.quantity += 1 }
                         )
 
                         Spacer(modifier = Modifier.width(15.dp))
 
                         Text(
-                            text = "${productDetail.quantity}",
+                            text = product.quantity.toString(),
                             fontSize = 18.sp,
                             fontFamily = FontFamily(Font(R.font.nunito_sans_semi_bold)),
                             color = Color(android.graphics.Color.parseColor("#242424"))
@@ -212,17 +188,17 @@ class DetailsScreen {
                                 .width(30.dp)
                                 .height(30.dp)
                                 .clip(RoundedCornerShape(6))
-                                .clickable { productDetail.quantity -= 1 }
+//                                .clickable { productDetail.quantity -= 1 }
                         )
                     }
                 }
 
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.icon_start_ams),
                         contentDescription = null,
@@ -232,7 +208,7 @@ class DetailsScreen {
                     )
 
                     Text(
-                        text = "${productDetail.start}",
+                        text = "4.5",
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.nunito_sans_bold)),
                         color = Color(android.graphics.Color.parseColor("#303030")),
@@ -240,7 +216,7 @@ class DetailsScreen {
                     )
 
                     Text(
-                        text = "(${productDetail.reviews} reviews)",
+                        text = "(65 reviews)",
                         fontSize = 14.sp,
                         fontFamily = FontFamily(Font(R.font.nunito_sans_bold)),
                         color = Color(android.graphics.Color.parseColor("#808080")),
@@ -249,22 +225,23 @@ class DetailsScreen {
                 }
 
                 Text(
-                    text = "${productDetail.description}",
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget",
                     fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.nunito_sans_regular)),
                     color = Color(android.graphics.Color.parseColor("#606060")),
                     modifier = Modifier
                         .padding(top = 10.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .weight(1f),
                     textAlign = TextAlign.Justify
                 )
 
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp),
+                        .padding(vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
-                ){
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.icon_luu),
                         contentDescription = null,
@@ -275,7 +252,9 @@ class DetailsScreen {
                     )
 
                     ElevatedButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            addToCart(product)
+                        },
                         modifier = Modifier
                             .width(250.dp)
                             .height(60.dp),
@@ -301,10 +280,11 @@ class DetailsScreen {
             }
         }
     }
+
     @Composable
-    fun itemChooseColor(item: ProductDetail.imgColor, index: Int, chooseColor: MutableState<Int>) {
+    fun itemChooseColor(item: AColor, index: Int, chooseColor: MutableState<Int>) {
         Spacer(modifier = Modifier.height(15.dp))
-        Box (
+        Box(
             modifier = Modifier
                 .size(34.dp)
                 .background(
@@ -315,12 +295,12 @@ class DetailsScreen {
                 )
                 .clickable { chooseColor.value = index },
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .size(24.dp)
                     .background(
-                        color = Color(android.graphics.Color.parseColor("#${item.color_img}")),
+                        color = item.color,
                         shape = CircleShape
                     )
             )

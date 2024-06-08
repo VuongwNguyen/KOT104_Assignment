@@ -1,5 +1,7 @@
 package com.example.kot104_assignmentfinal.screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -35,9 +38,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import coil.compose.rememberAsyncImagePainter
+import com.example.kot104_assignmentfinal.CartItem
 import com.example.kot104_assignmentfinal.R
+import com.example.kot104_assignmentfinal.changeQuantity
+import com.example.kot104_assignmentfinal.httpModel.Product
 import com.example.kot104_assignmentfinal.ui.theme.MakeYourColor40
 import com.example.kot104_assignmentfinal.ui.theme.WhiteColor
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 
 data class ProductInCart(
@@ -48,26 +57,19 @@ data class ProductInCart(
 )
 
 class CartScreen {
-    val listProductInCart = mutableListOf(
-        ProductInCart(R.drawable.product_image, "Product 1", 200, 1),
-        ProductInCart(R.drawable.product_image, "Product 2", 200, 1),
-        ProductInCart(R.drawable.product_image, "Product 3", 300, 1),
-        ProductInCart(R.drawable.product_image, "Product 4", 400, 1),
-        ProductInCart(R.drawable.product_image, "Product 5", 500, 1),
-        ProductInCart(R.drawable.product_image, "Product 6", 600, 1),
-        ProductInCart(R.drawable.product_image, "Product 7", 700, 1),
-        ProductInCart(R.drawable.product_image, "Product 8", 800, 1),
-        ProductInCart(R.drawable.product_image, "Product 9", 900, 1),
-        ProductInCart(R.drawable.product_image, "Product 10", 1000, 1),
-    )
-
-    var total = listProductInCart.sumOf { it.price * it.quantity }
 
     @Composable
-    fun Container() {
-        Column(
+    fun Container(
+        getCart: () -> List<CartItem>,
+//        changeQuantity: (Product,String ) -> Unit,
+        saveCart: (List<CartItem>) -> Unit,
+        goTo: (String) -> Unit
+    ) {
+        val ctxt = LocalContext.current
+        val cart = getCart()
 
-        ) {
+        val total = cart.sumOf { it.product.price * it.quantity }
+        Column {
             Spacer(modifier = Modifier.size(30.dp))
             ToolBarCP(
                 leftIcon = R.drawable.ic_back,
@@ -79,8 +81,8 @@ class CartScreen {
                     .weight(1f)
                     .padding(top = 20.dp, start = 20.dp, end = 20.dp)
             ) {
-                items(listProductInCart) { item ->
-                    RenderItemCate(item, {}, {})
+                items(cart) { item ->
+                    RenderItemCate(item = item, context = ctxt)
                 }
             }
             Surface(
@@ -151,7 +153,11 @@ class CartScreen {
                     }
 
                     ElevatedButton(
-                        onClick = { },
+                        onClick = {
+                            saveCart(listOf())
+                            Toast.makeText(ctxt, "Sucessfully!", Toast.LENGTH_SHORT).show()
+                            goTo("TabView")
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp),
@@ -181,14 +187,14 @@ class CartScreen {
 
     //    @Preview(showSystemUi = true, showBackground = true)
     @Composable
-    fun RenderItemCate(item: ProductInCart, plusFunction: () -> Unit, minusFunction: () -> Unit) {
+    fun RenderItemCate(item: CartItem,context: Context) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
         ) {
             Image(
-                painter = painterResource(id = item.img),
+                painter = rememberAsyncImagePainter(model = item.product.image[0]),
                 contentDescription = null,
                 modifier = Modifier
                     .width(100.dp)
@@ -210,14 +216,14 @@ class CartScreen {
                 ) {
                     Column {
                         Text(
-                            text = "${item.name}",
+                            text = "${item.product.name.replace("+", " ")}",
                             fontSize = 14.sp,
                             fontFamily = FontFamily(Font(R.font.nunito_sans_semi_bold)),
                             color = Color(0xff999999)
                         )
 
                         Text(
-                            text = "$ ${item.price}.00",
+                            text = "$ ${item.product.price}.00",
                             fontSize = 16.sp,
                             fontFamily = FontFamily(Font(R.font.nunito_sans_bold)),
                             color = Color(0xff242424),
@@ -240,7 +246,10 @@ class CartScreen {
                         contentDescription = null,
                         modifier = Modifier
                             .size(30.dp)
-                            .clickable { plusFunction() }
+                            .clickable {
+                                changeQuantity(item.product, context,"increase")
+
+                            }
                     )
 
                     Text(
@@ -256,7 +265,9 @@ class CartScreen {
                         contentDescription = null,
                         modifier = Modifier
                             .size(30.dp)
-                            .clickable { minusFunction() }
+                            .clickable {
+                                changeQuantity(item.product, context)
+                            }
                     )
                 }
             }

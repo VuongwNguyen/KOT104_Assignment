@@ -81,7 +81,7 @@ class SlashScreen {
             )
 
             TextButton(
-                onClick = { goTo("TabView") },
+                onClick = { goTo("loginScreen") },
                 modifier = Modifier
                     .width(160.dp)
                     .height(55.dp)

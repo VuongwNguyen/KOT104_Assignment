@@ -2,6 +2,7 @@ package com.example.kot104_assignmentfinal.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.kot104_assignmentfinal.R
 import com.example.kot104_assignmentfinal.constant.AppConstant
 import com.example.kot104_assignmentfinal.helper.RetrofitAPI
@@ -51,10 +53,15 @@ import com.example.kot104_assignmentfinal.ui.theme.GreyColor
 import com.example.kot104_assignmentfinal.ui.theme.HomeBeautiColor
 import com.example.kot104_assignmentfinal.ui.theme.MakeYourColor40
 import com.example.kot104_assignmentfinal.ui.theme.PrimaryColor
+import com.google.gson.Gson
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class HomeScreen {
     @Composable
-    fun Container() {
+    fun Container(
+        goTo: (String) -> Unit
+    ) {
         var listProduct by remember { mutableStateOf(listOf<Product>()) }
         var listCategory by remember { mutableStateOf(listOf<Category>()) }
 
@@ -109,13 +116,15 @@ class HomeScreen {
             ToolBarCP(
                 leftIcon = R.drawable.ic_search,
                 rightIcon = R.drawable.ic_cart,
-//                simpleText = "My cart"
+                fnRight = { goTo("cartScreen") }
             )
+
             LazyRow {
                 items(listCategory) { item ->
                     RenderItemCate(item)
                 }
             }
+
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(2),
                 verticalItemSpacing = 10.dp,
@@ -125,14 +134,15 @@ class HomeScreen {
                     .weight(1f)
             ) {
                 items(listProduct) { item ->
-                    RenderProduct(item)
+                    RenderProduct(item, goTo = { goTo(it) })
                 }
             }
         }
     }
 
     @Composable
-    fun RenderProduct(item: Product) {
+    fun RenderProduct(item: Product, goTo: (String) -> Unit) {
+
         Column {
             Box(
                 modifier = Modifier
@@ -140,9 +150,16 @@ class HomeScreen {
                     .clip(RoundedCornerShape(10.dp))
                     .height(200.dp)
                     .paint(
-                        painter = painterResource(id = R.drawable.product_image),
+                        painter = rememberAsyncImagePainter(model = item.image[0]),
                         contentScale = ContentScale.FillBounds
                     )
+                    .clickable {
+                        val productJson = URLEncoder.encode(
+                            Gson().toJson(item),
+                            StandardCharsets.UTF_8.toString()
+                        )
+                        goTo("detailsScreen/${productJson}")
+                    }
             ) {
                 Image(
                     painter = painterResource(
@@ -162,6 +179,7 @@ class HomeScreen {
             }
             Text(
                 text = item.name,
+                maxLines = 1,
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
@@ -198,7 +216,8 @@ class HomeScreen {
 
 @Composable
 fun ToolBarCP(
-    leftIcon: Int = 0, rightIcon: Int = 0, simpleText: String = ""
+    leftIcon: Int = 0, rightIcon: Int = 0, simpleText: String = "",
+    fnRight: () -> Unit = {}
 ) {
     val lIcon = if (leftIcon == 0) 0 else leftIcon
     val rIcon = if (rightIcon == 0) 0 else rightIcon
@@ -254,7 +273,13 @@ fun ToolBarCP(
             )
         }
         if (rIcon != 0) {
-            Icon(painter = painterResource(id = rIcon), contentDescription = null)
+            Icon(
+                painter = painterResource(id = rIcon),
+                contentDescription = null,
+                modifier = Modifier.clickable {
+                    println("Cart clicked")
+                    fnRight()
+                })
         } else {
             Spacer(modifier = Modifier.size(25.dp))
         }

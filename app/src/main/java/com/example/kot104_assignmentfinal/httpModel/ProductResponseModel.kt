@@ -15,7 +15,7 @@ data class Category(
 data class Product(
     @JsonProperty("_id") val _id: String,
     @JsonProperty("name") val name: String,
-    @JsonProperty("image") val image: List<String>,
+    @JsonProperty("image") val image: List<String> = listOf(),
     @JsonProperty("price") val price: Int,
     @JsonProperty("quantity") val quantity: Int,
     @JsonProperty("category_id") val category_id: Category,

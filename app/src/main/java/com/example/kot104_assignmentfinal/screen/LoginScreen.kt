@@ -144,7 +144,11 @@ class LoginScreen {
                         text = "Sign up",
                         modifier = Modifier
                             .padding(end = 20.dp)
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .clickable {
+                                       goTo("registerScreen")
+
+                            },
                         style = MaterialTheme.typography.labelSmall,
                     )
                     Spacer(modifier = Modifier.size(30.dp))
